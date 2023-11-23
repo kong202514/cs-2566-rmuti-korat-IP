@@ -8,4 +8,5 @@ public class AppUser
     //snippet "prop" then tap
     public required byte[] PasswordHash { get; set; }
     public required byte[] PasswordSalt { get; set; }
+    public required byte[] test { get; set; }
 }
