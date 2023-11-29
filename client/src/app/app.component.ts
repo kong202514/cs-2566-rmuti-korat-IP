@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { faBell } from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,7 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'gong';
   users: any
+  faBell = faBell
   constructor(private http: HttpClient) { }
 
 

@@ -22,7 +22,7 @@ public class UsersController : ControllerBase
         return await _dataContext.Users.ToListAsync();
     }
 
-    [HttpGet("{id}")] //endpoint: /api/users/25         ,when id = 25
+    [HttpGet("{id}")] //endpoint: /api/users/25 ,when id = 25
     public async Task<ActionResult<AppUser?>> GetUser(int id)
     {
         return await _dataContext.Users.FindAsync(id);
