@@ -1,0 +1,64 @@
+﻿using System;
+using API.Data;
+using API.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace API.Controllers;
+
+#nullable disable
+
+
+public class ErrorController : BaseApiController
+{
+    private readonly DataContext _dataContext;
+
+    public ErrorController(DataContext dataContext)
+    {
+        _dataContext = dataContext;
+    }
+
+
+    [HttpGet("bad-request")]
+    public ActionResult<string> GetBadRequest()
+    {
+        return BadRequest(" i love you");
+    }
+
+
+
+    [HttpGet("not-found")]
+    public ActionResult<AppUser> GetNotFound()
+    {
+        var user = _dataContext.Users.Find(-1);
+        if (user is null) return NotFound();
+        return user;
+    }
+
+
+    [HttpGet("server-error")]
+    public ActionResult<string> GetServerError()
+    {
+
+
+        var user = _dataContext.Users.Find(-1);
+        var stringUser = user.ToString();//can not turn null to string = no reference exception
+        return stringUser;
+
+
+        // return StatusCode(500, e.ToString());
+
+
+    }
+
+
+    [Authorize]
+    [HttpGet("auth")]
+    public ActionResult<string> GetSecret()
+    {
+        return "xxx";
+    }
+
+
+
+}
