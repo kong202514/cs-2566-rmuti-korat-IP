@@ -51,7 +51,7 @@ public class AccountController : BaseApiController
         await _dataContext.SaveChangesAsync();
         return new UserDto
         {
-            UserName = user.UserName,
+            Username = user.UserName,
             token = _tokenService.CreateToken(user)
         };
 
@@ -74,7 +74,7 @@ public class AccountController : BaseApiController
         }
         return new UserDto
         {
-            UserName = user.UserName,
+            Username = user.UserName,
             token = _tokenService.CreateToken(user)
         }; ;
     }
