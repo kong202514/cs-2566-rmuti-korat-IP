@@ -15,9 +15,7 @@ public class TokenService : ITokenService
     }
     public string CreateToken(AppUser user)
     {
-        var claims = new List<Claim> {
-            new(JwtRegisteredClaimNames.NameId, user.UserName!)
-        };
+        var claims = new List<Claim> { new(JwtRegisteredClaimNames.NameId, user.UserName!) };
 
         var credentials = new SigningCredentials(_privateKey, SecurityAlgorithms.HmacSha256Signature);
 

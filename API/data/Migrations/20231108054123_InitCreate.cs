@@ -23,14 +23,14 @@ namespace API.Data.Migrations
 
 
 
-            migrationBuilder.InsertData(
-      table: "Users",
-      columns: new[] { "Id", "UserName" },
-      values: new object[,]{
-              {1,"Menta"},
-              {2,"Manita"}
-      }
-  );
+            //             migrationBuilder.InsertData(
+            //       table: "Users",
+            //       columns: new[] { "Id", "UserName" },
+            //       values: new object[,]{
+            //               {1,"Menta"},
+            //               {2,"Manita"}
+            //       }
+            //   );
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

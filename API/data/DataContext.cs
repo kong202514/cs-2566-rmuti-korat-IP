@@ -9,6 +9,11 @@ public class DataContext : DbContext
     {
     }
     public DbSet<AppUser> Users { get; set; }
+
+    internal Task GetUserByIdAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 
