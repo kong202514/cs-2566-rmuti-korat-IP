@@ -44,11 +44,7 @@ public class UsersController : ControllerBase
 
     [HttpGet("{id}")] //endpoint: /api/users/25 ,when id = 25
 
-    // public async Task<ActionResult<MemberDto?>> GetUser(int id)
-    // {
-    //     var user = await _userRepository.GetUserByIdAsync(id);
-    //     return _mapper.Map<MemberDto>(user);
-    // }
+    public async Task<ActionResult<MemberDto?>> GetUser(int id) => await _userRepository.GetUserByIdAsync(id);
 
 
 
