@@ -10,30 +10,37 @@ namespace API.Data;
 public class UserRepository : IUserRepository
 {
     private readonly DataContext _dataContext;
-    private readonly IMapper _mapper;
 
-    public UserRepository(DataContext dataContext, IMapper mapper)
+    public UserRepository(DataContext dataContext)
     {
-        this._dataContext = dataContext;
-        this._mapper = mapper;
+        _dataContext = dataContext;
     }
 
-    public Task<MemberDto?> GetMemberAsync(string username)
+    public async Task<MemberDto?> GetMemberAsync(string username)
     {
-        throw new NotImplementedException();
+        return await _dataContext.Users
+             .Where(user => user.UserName == username)
+             // .Select(user => new MemberDto
+             // {
+             //     Id = user.Id,
+             //     UserName = user.UserName,
+             //      ...
+             // })
+             .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
+             .SingleOrDefaultAsync();
     }
 
     public async Task<IEnumerable<MemberDto>> GetMembersAsync()
     {
-        return (IEnumerable<MemberDto>)await _dataContext.Users
-                    .Include(user => user.Photos)
-                    .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-                    .SingleOrDefaultAsync();
+        return await _dataContext.Users.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
-    public async Task<AppUser?> GetUserByIdAsync(int id)
+    public async Task<MemberDto?> GetUserByIdAsync(int id)
     {
-        return await _dataContext.Users.FindAsync(id);
+        return await _dataContext.Users
+           .Where(user => user.Id == id)
+           .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
+           .SingleOrDefaultAsync();
     }
 
     public async Task<AppUser?> GetUserByUserNameAsync(string username)
@@ -42,6 +49,7 @@ public class UserRepository : IUserRepository
         .Include(user => user.Photos)
         .SingleOrDefaultAsync(user => user.UserName == username);
     }
+
     public async Task<IEnumerable<AppUser>> GetUsersAsync()
     {
         return await _dataContext.Users
@@ -52,8 +60,13 @@ public class UserRepository : IUserRepository
 
     public void Update(AppUser user) => _dataContext.Entry(user).State = EntityState.Modified;
 
-    Task IUserRepository.GetUserByIdAsync(int id)
+    Task<AppUser?> IUserRepository.GetUserByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
+}
+
+internal class _mapper
+{
+    public static AutoMapper.IConfigurationProvider ConfigurationProvider { get; internal set; }
 }

@@ -20,9 +20,7 @@ export class MemberDetailComponent implements OnInit {
 
 
   member: Member | undefined
-  constructor(private memberService: MembersService, private route: ActivatedRoute) {
-
-  }
+  constructor(private memberService: MembersService, private route: ActivatedRoute) { }
 
 
 

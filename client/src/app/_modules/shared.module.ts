@@ -11,8 +11,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs'
   imports: [
     CommonModule,
     BsDropdownModule.forRoot(),
-    ToastrModule.forRoot()
-    , TabsModule.forRoot(),
+    ToastrModule.forRoot(),
+    TabsModule.forRoot()
   ],
   exports: [
     BsDropdownModule,

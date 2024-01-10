@@ -19,10 +19,12 @@ public class AutoMapperUserProfiles : Profile
                       user => user.Age,
                       opt => opt.MapFrom(user => user.BirthDate.CalculateAge())
                   )
-                  .ForMember(
-                      user => user.Age,
-                      opt => opt.MapFrom(user => user.BirthDate.CalculateAge())
-                  );
+                .ForMember(
+                    user => user.Age,
+                    opt => opt.MapFrom(user => user.BirthDate.CalculateAge())
+                );
+        CreateMap<Photo, PhotoDto>();
+
 
 
     }

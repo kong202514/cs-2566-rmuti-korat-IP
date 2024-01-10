@@ -7,6 +7,8 @@ import { MembersService } from 'src/app/_services/members.service';
   templateUrl: './member-list.component.html',
   styleUrls: ['./member-list.component.css']
 })
+
+
 export class MemberListComponent implements OnInit {
   members: Member[] = []
 
@@ -18,12 +20,7 @@ export class MemberListComponent implements OnInit {
 
   loadMember() {
     this.memberService.getMembers().subscribe({
-      next: users => {
-        console.log(users);
-
-        this.members = users
-      }
-
+      next: users => this.members = users
     })
   }
 }
