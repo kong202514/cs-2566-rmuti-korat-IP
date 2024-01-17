@@ -27,9 +27,15 @@
         <!-- snipet: div.dropdown -->
         <div dropdown class="dropdown" *ngIf="currentUser$ | async">
             <!-- snipet: a.dropdown-toggle.text-light -->
-            <a dropdownToggle class="dropdown-toggle text-light">Hello {{ user?.username | titlecase}}</a>
+
+
+            <a dropdownToggle class="text-decoration-none dropdown-toggle text-light">Hello
+                {{user?.aka | titlecase}}</a>
+
+
             <div *dropdownMenu="" class="dropdown-menu">
-                <a class="dropdown-item">Profile</a>
+                <a class="dropdown-item" routerLink="member/profile">Profile</a>
+
                 <a class="dropdown-item" (click)="logout()">Logout</a>
             </div>
         </div>

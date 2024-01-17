@@ -35,6 +35,7 @@ public class AppUser
     public List<Photo> Photos { get; set; } = new();
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public DateTime LastActive { get; set; } = DateTime.UtcNow;
+    public string? Gender { get; internal set; }
     // public int Age
     // {
     //     get
