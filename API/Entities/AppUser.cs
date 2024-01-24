@@ -36,13 +36,8 @@ public class AppUser
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public DateTime LastActive { get; set; } = DateTime.UtcNow;
     public string? Gender { get; internal set; }
-    // public int Age
-    // {
-    //     get
-    //     {
-    //         return BirthDate.CalculateAge(); //using API.Extensions
-    //     }
-    // }
+    public List<UserLike>? LikedByUsers { get; set; }
+    public List<UserLike>? LikedUsers { get; set; }
 
 
 }

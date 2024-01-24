@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
@@ -14,6 +14,11 @@ import { MembersService } from 'src/app/_services/members.service';
 })
 export class MemberProfileComponent implements OnInit {
   @ViewChild('profileForm') profileForm: NgForm | undefined
+  @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
+    if (this.profileForm?.dirty) {
+      $event.returnValue = true
+    }
+  }
   member: Member | undefined
   user: User | undefined | null
 

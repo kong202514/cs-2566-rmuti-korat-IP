@@ -1,5 +1,9 @@
-import { CanActivateFn } from '@angular/router';
+import { CanDeactivateFn } from "@angular/router"
+import { MemberProfileComponent } from "../members/member-profile/member-profile.component"
 
-export const preventUnsavedChangesGuard: CanActivateFn = (route, state) => {
-  return true;
-};
+export const preventUnsavedChangesGuard: CanDeactivateFn<MemberProfileComponent> = (component) => {
+  if (component.profileForm?.dirty) {
+    return confirm('Are you sure? any unsaved change will be lost!')
+  }
+  return true
+}

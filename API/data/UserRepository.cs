@@ -1,10 +1,12 @@
 ﻿using System;
+using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
+using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Company.ClassLibrary1;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
@@ -12,8 +14,9 @@ namespace API.Data;
 public class UserRepository : IUserRepository
 {
     private readonly DataContext _dataContext;
+    private readonly IMapper _mapper;
 
-    public UserRepository(DataContext dataContext)
+    public UserRepository(DataContext dataContext, IMapper mapper)
     {
         _dataContext = dataContext;
     }
@@ -32,6 +35,11 @@ public class UserRepository : IUserRepository
              .SingleOrDefaultAsync();
     }
 
+    public Task<MemberDto> GetMemberbyUserNameAsync(UserParams userParams)
+    {
+        throw new NotImplementedException();
+    }
+
     //public async Task<IEnumerable<MemberDto>> GetMembersAsync()
     public async Task<PageList<MemberDto>> GetMembersAsync(UserParams userParams)
     {
@@ -46,6 +54,11 @@ public class UserRepository : IUserRepository
 
 
         var query = _dataContext.Users.AsQueryable();
+        query = userParams.OrderBy switch
+        {
+            "created" => query.OrderByDescending(user => user.Created),
+            _ => query.OrderByDescending(user => user.LastActive),
+        };
         query = query.Where(user => user.BirthDate >= minBirthDate && user.BirthDate <= maxBirthDate);
 
         query = query.Where(user => user.UserName != userParams.CurrentUserName);
@@ -56,6 +69,11 @@ public class UserRepository : IUserRepository
             query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
             userParams.PageNumber,
             userParams.PageSize);
+    }
+
+    public Task<MemberDto?> GetMembersAsync(string username)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<MemberDto?> GetUserByIdAsync(int id)
@@ -73,6 +91,11 @@ public class UserRepository : IUserRepository
         .SingleOrDefaultAsync(user => user.UserName == username);
     }
 
+    public Task<AppUser?> GetUserByUserNameWithOutPhotoAsync(string username)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<IEnumerable<AppUser>> GetUsersAsync()
     {
         return await _dataContext.Users
@@ -83,13 +106,18 @@ public class UserRepository : IUserRepository
 
     public void Update(AppUser user) => _dataContext.Entry(user).State = EntityState.Modified;
 
-    Task<AppUser?> IUserRepository.GetUserByIdAsync(int id)
+    Task<ActionResult<MemberDto?>> IUserRepository.GetMemberAsync(string username)
     {
         throw new NotImplementedException();
     }
-}
 
-internal class _mapper
-{
-    public static AutoMapper.IConfigurationProvider ConfigurationProvider { get; internal set; }
+    Task IUserRepository.GetMembersAsync(UserParams userParams)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<AppUser?> IUserRepository.GetUserByIdAsync(int id)
+    {
+
+    }
 }
