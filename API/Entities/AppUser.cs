@@ -1,5 +1,4 @@
 using API.Extensions;
-using Company.ClassLibrary1;
 
 namespace API.Entities;
 
