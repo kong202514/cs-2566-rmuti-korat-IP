@@ -7,41 +7,31 @@ import { map, of, take } from 'rxjs';
 import { UserParams } from '../_models/userParams ';
 import { User } from '../_models/user';
 import { AccountService } from './account.service';
+import { getPaginationHeaders, getPaginationResult } from './paginationHelper';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MembersService {
-  userParams: UserParams | undefined
+  // userParams: UserParams | undefined
   user: User | undefined
   memberCache = new Map()
 
 
   baseUrl = environment.apiUrl
 
-  constructor(private http: HttpClient, private accountService: AccountService) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe({
-      next: user => {
-        if (user) {
-          this.userParams = new UserParams(user)
-          this.user = user
-        }
-      }
-    })
+  constructor(private http: HttpClient) {//, private accountService: AccountService
+
   }
 
 
-  getUserParams() {
-    return this.userParams
-  }
-  setUserParams(params: UserParams) {
-    this.userParams = params
-  }
-  resetUserParams() {
-    if (!this.user) return
-    this.userParams = new UserParams(this.user)
-    return this.userParams
-  }
+  // getUserParams() {
+  //   return this.userParams
+  // }
+  // setUserParams(params: UserParams) {
+  //   this.userParams = params
+  // }
+
 
   private _key(userParams: UserParams) {
     return Object.values(userParams).join('_');
@@ -54,38 +44,28 @@ export class MembersService {
     const response = this.memberCache.get(key)
     if (response) return of(response)
 
-    let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize)
+    let params = getPaginationHeaders(userParams.pageNumber, userParams.pageSize)
     params = params.append('minAge', userParams.minAge)
     params = params.append('maxAge', userParams.maxAge)
     params = params.append('gender', userParams.gender)
     params = params.append('orderBy', userParams.orderBy)
     const url = this.baseUrl + 'users'
-    return this.getPaginationResult<Member[]>(url, params, key)
+    return getPaginationResult<Member[]>(url, params, this.http)
+  }
+
+  addLike(username: string) {
+    return this.http.post(this.baseUrl + 'likes/' + username, {})
+  }
+
+  getLikes(predicate: string, pageNumber: number, pageSize: number) {
+    let params = getPaginationHeaders(pageNumber, pageSize)
+    params = params.append('predicate', predicate)
+    const url = this.baseUrl + 'likes'
+    return getPaginationResult<Member[]>(url, params, this.http)
   }
 
 
-  private getPaginationResult<T>(url: string, params: HttpParams, key: string | null) {
-    const paginationResult: PaginationResult<T> = new PaginationResult<T>
-    return this.http.get<T>(url, { observe: 'response', params }).pipe(
-      map(response => {
-        if (response.body)
-          paginationResult.result = response.body
 
-        const pagination = response.headers.get('Pagination')
-        if (pagination)
-          paginationResult.pagination = JSON.parse(pagination)
-        if (key)
-          this.memberCache.set(key, paginationResult)
-        return paginationResult
-      })
-    )
-  }
-  private getPaginationHeaders(pageNumber: number, pageSize: number) {
-    let params = new HttpParams()
-    params = params.append('pageNumber', pageNumber)
-    params = params.append('pageSize', pageSize)
-    return params
-  }
 
 
 

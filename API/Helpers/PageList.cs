@@ -1,3 +1,4 @@
+using API.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Helpers;
@@ -27,5 +28,10 @@ public class PageList<T> : List<T>
         var count = await source.CountAsync();
         var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         return new PageList<T>(items, count, pageNumber, pageSize);
+    }
+
+    internal static async Task<PageList<LikeDto>> CreateAsync(Task<List<LikeDto>> likedUsers, int pageNumber, int pageSize)
+    {
+        throw new NotImplementedException();
     }
 }

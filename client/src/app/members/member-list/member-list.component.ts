@@ -17,7 +17,7 @@ import { MembersService } from 'src/app/_services/members.service';
 
 export class MemberListComponent implements OnInit {
   pageNumber: any;
-
+  user: User | undefined
   members: Member[] = []
   pagination: Pagination | undefined
   userParams: UserParams | undefined
@@ -30,44 +30,61 @@ export class MemberListComponent implements OnInit {
   ]
 
   constructor(private accountService: AccountService, private memberService: MembersService) {
-    this.userParams = this.memberService.getUserParams()
-    // this.accountService.currentUser$.pipe(take(1)).subscribe({
-    //   next: user => {
-    //     if (user) {
-    //       this.userParams = new UserParams(user)
-    //       this.user = user
-    //     }
-    //   }
-    // })
+    this.accountService.currentUser$.pipe(take(1)).subscribe({
+      next: user => {
+        if (user) this.user = user
+      }
+    })
   }
 
   resetFilters() {
 
 
-
-    this.userParams = this.memberService.resetUserParams()
+    if (this.user)
+      this.userParams = new UserParams(this.user)
     this.loadMember()
 
   }
+
+
+  // resetUserParams() {
+  //   if (!this.user) return
+  //   this.userParams = new UserParams(this.user)
+  //   return this.userParams
+  // }
 
 
   ngOnInit(): void {
+    this.resetFilters()
+    if (this.user) {
+      const paramsString = localStorage.getItem('userParams')
+      if (paramsString) {
+        const localParams = JSON.parse(paramsString)
+        if (localParams.username === this.user.username)
+          this.userParams = localParams.params
+      }
+    }
     this.loadMember()
   }
+
 
   pageChanged(event: any) {
     if (!this.userParams) return
     if (this.userParams.pageNumber === event.page) return
     this.userParams.pageNumber = event.page
-    this.memberService.setUserParams(this.userParams)
     this.loadMember()
   }
-
+  private _saveParams() {
+    if (this.user)
+      localStorage.setItem('userParams', JSON.stringify({
+        username: this.user.username,
+        params: this.userParams
+      }))
+  }
 
   loadMember() {
-    if (!this.userParams) return
     if (this.userParams) {
-      this.memberService.setUserParams(this.userParams)
+      this._saveParams()
       this.memberService.getMembers(this.userParams).subscribe({
         next: response => {
           if (response.result && response.pagination) {

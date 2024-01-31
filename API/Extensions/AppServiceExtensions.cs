@@ -21,6 +21,7 @@ public static class AppServiceExtensions
         services.AddScoped<IlikesRepository, LikesRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<LogUserActivity>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
