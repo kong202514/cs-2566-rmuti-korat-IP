@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
@@ -6,10 +6,7 @@ using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
-namespace API.Data;
 
 public class UserRepository : IUserRepository
 {
@@ -19,105 +16,78 @@ public class UserRepository : IUserRepository
     public UserRepository(DataContext dataContext, IMapper mapper)
     {
         _dataContext = dataContext;
+        _mapper = mapper;
     }
 
-    public async Task<MemberDto?> GetMemberAsync(string username)
+    
+
+    public async Task<MemberDto?> GetMemberByUserNameAsync(string username)
     {
-        return await _dataContext.Users
-             .Where(user => user.UserName == username)
-             // .Select(user => new MemberDto
-             // {
-             //     Id = user.Id,
-             //     UserName = user.UserName,
-             //      ...
-             // })
-             .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-             .SingleOrDefaultAsync();
+        return await _dataContext
+            .Users.Where(user => user.UserName == username)
+            .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync();
     }
 
-    public Task<MemberDto> GetMemberbyUserNameAsync(UserParams userParams)
-    {
-        throw new NotImplementedException();
-    }
-
-    //public async Task<IEnumerable<MemberDto>> GetMembersAsync()
     public async Task<PageList<MemberDto>> GetMembersAsync(UserParams userParams)
     {
+        // var query = _dataContext.Users.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).AsNoTracking();
+        IQueryable<AppUser> query = _dataContext.Users.AsQueryable();
+        query = query.Where(user => user.UserName != userParams.CurrentUserName);
+        if (userParams.Gender != "non-binary")
+        {
+            query = query.Where(user => user.Gender == userParams.Gender);
+        }
 
-
-        var minBirthDate = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
-        var maxBirthDate = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
-
-
-
-
-
-
-        var query = _dataContext.Users.AsQueryable();
+        DateOnly minBirthDate = DateOnly.FromDateTime(
+            DateTime.Today.AddYears(-userParams.MaxAge - 1)
+        );
+        DateOnly maxBirthDate = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
+        query = query.Where(
+            user => user.BirthDate >= minBirthDate && user.BirthDate <= maxBirthDate
+        );
         query = userParams.OrderBy switch
         {
             "created" => query.OrderByDescending(user => user.Created),
-            _ => query.OrderByDescending(user => user.LastActive),
+            _ => query.OrderByDescending(user => user.LastActive)
         };
-        query = query.Where(user => user.BirthDate >= minBirthDate && user.BirthDate <= maxBirthDate);
 
-        query = query.Where(user => user.UserName != userParams.CurrentUserName);
-        if (userParams.Gender != "non-binary")
-            query = query.Where(user => user.Gender == userParams.Gender);
-        query.AsNoTracking();
+        _ = query.AsNoTracking();
         return await PageList<MemberDto>.CreateAsync(
             query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
             userParams.PageNumber,
-            userParams.PageSize);
+            userParams.PageSize
+        );
     }
 
-    public Task<MemberDto?> GetMembersAsync(string username)
-    {
-        throw new NotImplementedException();
-    }
 
-    public async Task<MemberDto?> GetUserByIdAsync(int id)
+   
+
+    public async Task<AppUser?> GetUserByIdAsync(int id)
     {
-        return await _dataContext.Users
-           .Where(user => user.Id == id)
-           .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-           .SingleOrDefaultAsync();
+        // TODO: Join Photos
+        return await _dataContext.Users.FindAsync(id);
     }
 
     public async Task<AppUser?> GetUserByUserNameAsync(string username)
     {
-        return await _dataContext.Users
-        .Include(user => user.Photos)
-        .SingleOrDefaultAsync(user => user.UserName == username);
+        return await _dataContext
+            .Users.Include(user => user.Photos)
+            .SingleOrDefaultAsync(item => item.UserName == username);
     }
 
     public Task<AppUser?> GetUserByUserNameWithOutPhotoAsync(string username)
     {
-        throw new NotImplementedException();
+        return _dataContext.Users.SingleOrDefaultAsync(item => item.UserName == username);
     }
 
-    public async Task<IEnumerable<AppUser>> GetUsersAsync()
+    public async Task<bool> SaveAllAsync()
     {
-        return await _dataContext.Users
-        .Include(user => user.Photos)
-        .ToListAsync();
-    }
-    public async Task<bool> SaveAllAsync() => await _dataContext.SaveChangesAsync() > 0;
-
-    public void Update(AppUser user) => _dataContext.Entry(user).State = EntityState.Modified;
-
-    Task<ActionResult<MemberDto?>> IUserRepository.GetMemberAsync(string username)
-    {
-        throw new NotImplementedException();
+        return await _dataContext.SaveChangesAsync() > 0;
     }
 
-    Task IUserRepository.GetMembersAsync(UserParams userParams)
+    public void Update(AppUser user)
     {
-        throw new NotImplementedException();
-    }
-
-    Task<AppUser?> IUserRepository.GetUserByIdAsync(int id)
-    {
-
+        _dataContext.Entry(user).State = EntityState.Modified;
     }
 }

@@ -28,6 +28,10 @@ export class MemberProfileComponent implements OnInit {
     })
   }
 
+
+
+ 
+
   ngOnInit(): void {
     this.loadMember()
   }

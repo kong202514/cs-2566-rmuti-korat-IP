@@ -24,7 +24,9 @@ export class MembersService {
 
   }
 
-
+  updateProfile(member: Member) {
+    return this.http.put(this.baseUrl + 'users', member)
+  }
   // getUserParams() {
   //   return this.userParams
   // }
@@ -39,20 +41,7 @@ export class MembersService {
 
   // paginationResult: PaginationResult<Member[]> = new PaginationResult<Member[]>
 
-  getMembers(userParams: UserParams) {
-    const key = this._key(userParams)
-    const response = this.memberCache.get(key)
-    if (response) return of(response)
-
-    let params = getPaginationHeaders(userParams.pageNumber, userParams.pageSize)
-    params = params.append('minAge', userParams.minAge)
-    params = params.append('maxAge', userParams.maxAge)
-    params = params.append('gender', userParams.gender)
-    params = params.append('orderBy', userParams.orderBy)
-    const url = this.baseUrl + 'users'
-    return getPaginationResult<Member[]>(url, params, this.http)
-  }
-
+ 
   addLike(username: string) {
     return this.http.post(this.baseUrl + 'likes/' + username, {})
   }
@@ -81,6 +70,22 @@ export class MembersService {
 
     return this.http.get<Member>(this.baseUrl + 'users/username/' + username)
   }
+
+
+  getMembers(userParams: UserParams) {
+    const key = this._key(userParams)
+    const response = this.memberCache.get(key)
+    if (response) return of(response)
+
+    let params = getPaginationHeaders(userParams.pageNumber, userParams.pageSize)
+    params = params.append('minAge', userParams.minAge)
+    params = params.append('maxAge', userParams.maxAge)
+    params = params.append('gender', userParams.gender)
+    params = params.append('orderBy', userParams.orderBy)
+    const url = this.baseUrl + 'users'
+    return getPaginationResult<Member[]>(url, params, this.http)
+  }
+
 
 
 }

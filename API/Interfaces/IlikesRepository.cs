@@ -12,5 +12,5 @@ public interface IlikesRepository
 
 
     Task<PageList<LikeDto>> GetUserLikes(LikesParams likesParams);
-    Task GetUserLikes(object likesParams);
+    
 }

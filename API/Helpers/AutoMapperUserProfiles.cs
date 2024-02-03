@@ -13,7 +13,7 @@ public class AutoMapperUserProfiles : Profile
     {
         CreateMap<AppUser, MemberDto>();
         CreateMap<Photo, PhotoDto>();
-
+ CreateMap<MemberUpdateDto, AppUser>();
 
 
 
