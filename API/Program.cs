@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddAppServices(builder.Configuration);
 
-builder.Services.AddJWTService(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
 

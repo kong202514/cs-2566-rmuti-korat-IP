@@ -22,10 +22,14 @@ public class AccountController : BaseApiController
         _dataContext = dataContext;
         _tokenService = tokenService;
     }
-    private async Task<bool> isUserExists(string username)
-    {
-        return await _dataContext.Users.AnyAsync(user => user.UserName == username.ToLower());
-    }
+    private async Task<bool> isUserExists(string username) => await _dataContext.Users.AnyAsync(user => user.UserName == username.ToLower());
+
+
+
+    var user = await _dataContext.Users
+                      .Include(photo => photo.Photos)
+                      .SingleOrDefaultAsync(user =>
+                          user.UserName == loginDto.UserName);
 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -41,7 +45,7 @@ public class AccountController : BaseApiController
 
 
         // / ใช้ using เพื่อไม่ให้ garbage collector จัดการ
-        using var hmacSHA256 = new HMACSHA256(); //HMACSHA256 inherit มาจาก IDisposable interface
+        // using var hmacSHA256 = new HMACSHA256(); //HMACSHA256 inherit มาจาก IDisposable interface
 
         // var user = new AppUser
         // {
@@ -70,19 +74,19 @@ public class AccountController : BaseApiController
 
         if (user is null) return Unauthorized("invalid username");
 
-        using var hmacSHA256 = new HMACSHA256(user.PasswordSalt!);
-
-        var computedHash = hmacSHA256.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password!.Trim()));
-        for (int i = 0; i < computedHash.Length; i++)
-        {
-            if (computedHash[i] != user.PasswordHash?[i]) return Unauthorized("invalid password");
-        }
+        // using var hmacSHA256 = new HMACSHA256(user.PasswordSalt!);
+        // var computedHash = hmacSHA256.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password!.Trim()));
+        // for (int i = 0; i < computedHash.Length; i++)
+        // {
+        // if (computedHash[i] != user.PasswordHash?[i]) return Unauthorized("invalid password");
+        // }
         return new UserDto
         {
             Username = user.UserName,
             token = _tokenService.CreateToken(user),
             Aka = user.Aka,
-            Gender = user.Gender
-        }; ;
+            Gender = user.Gender,
+            PhotoUrl = user.Photos.FirstOrDefault(photo => photo.IsMain)?.Url
+        };
     }
 }

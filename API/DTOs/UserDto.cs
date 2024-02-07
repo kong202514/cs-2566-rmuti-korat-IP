@@ -8,7 +8,7 @@ public class UserDto
     public string? token { get; set; }
 
 
-
+    public string? PhotoUrl { get; set; }
     public string? Aka { get; set; }
 
     public string? Gender { get; set; }

@@ -19,9 +19,9 @@ public class Seed
         {
             using var hmacSHA256 = new HMACSHA256();
             user.UserName = user.UserName.ToLower();
-            user.PasswordHash = hmacSHA256.ComputeHash(Encoding.UTF8.GetBytes("P@ssw0rd"));
-            user.PasswordSalt = hmacSHA256.Key;
-
+            // user.PasswordHash = hmacSHA256.ComputeHash(Encoding.UTF8.GetBytes("P@ssw0rd"));
+            // user.PasswordSalt = hmacSHA256.Key;
+            user.UserName = user.UserName.ToLower();
             dataContext.Users.Add(user);
         }
         await dataContext.SaveChangesAsync();

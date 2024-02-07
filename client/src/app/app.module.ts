@@ -23,6 +23,7 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { MemberProfileComponent } from './members/member-profile/member-profile.component';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
+import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,10 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
     ServerErrorComponent,
     MemberCardComponent,
     MemberProfileComponent,
-    PhotoEditorComponent
+    PhotoEditorComponent,
+    FontAwesomeModule,
+    FormsModule,
+
   ],
   imports: [
     BrowserModule,
@@ -61,3 +65,4 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

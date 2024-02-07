@@ -3,7 +3,12 @@
     cursor: pointer;
 }
 
-
+img {
+    max-height: 40px;
+    border: 1px solid white;
+    border-radius: 50%;
+    display: inline;
+}
 .container{
     margin-top: 10px;
 }

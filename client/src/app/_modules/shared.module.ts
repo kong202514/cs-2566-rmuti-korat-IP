@@ -22,9 +22,9 @@ import { TimeagoModule } from "ngx-timeago";
     TabsModule.forRoot(),
     NgxSpinnerModule.forRoot({ type: 'square-spin' }),
     FileUploadModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule.forRoot(), FileUploadModule
 
   ],
-  exports: [BsDropdownModule, TabsModule, ToastrModule, NgxSpinnerModule, PaginationModule, BsDatepickerModule, FileUploadModule, ButtonsModule, TimeagoModule,],
+  exports: [BsDropdownModule, TabsModule, ToastrModule, NgxSpinnerModule, PaginationModule, BsDatepickerModule, FileUploadModule, ButtonsModule, TimeagoModule, FileUploadModule],
 })
 export class SharedModule { }

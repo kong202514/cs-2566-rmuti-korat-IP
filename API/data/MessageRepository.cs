@@ -35,11 +35,22 @@ public class MessageRepository : IMessageRepository
         var messages = await _dataContext.Messages
                          .Include(ms => ms.Sender).ThenInclude(user => user.Photos)
                          .Include(ms => ms.Recipient).ThenInclude(user => user.Photos)
-                         .Where(ms =>
-                             (ms.RecipientUsername == thisUserName && ms.SenderUsername == recipientUserName) ||
-                             (ms.RecipientUsername == recipientUserName && ms.SenderUsername == thisUserName)
-                         )
-                         .OrderByDescending(ms => ms.DateSent)
+                        .Where(ms =>
+            (
+                ms.RecipientUsername == thisUserName
+              && ms.IsRecipientDeleted == false
+              && ms.SenderUsername == recipientUserName
+            )
+              ||
+            (
+                ms.RecipientUsername == recipientUserName
+              && ms.IsSenderDeleted == false
+              && ms.SenderUsername == thisUserName
+            )
+        )
+                           //  .OrderByDescending(ms => ms.DateSent)
+                           .OrderBy(ms => ms.DateSent)
+
                          .ToListAsync();
 
         var unreadMessages = messages
